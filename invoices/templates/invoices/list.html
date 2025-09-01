@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Invoices</h4>
+  <a class="btn btn-light" href="/invoices/create/">+ New Invoice</a>
+</div>
+<div class="card p-3">
+  <table class="table table-dark table-striped">
+    <thead><tr><th>No.</th><th>Client</th><th>Status</th><th>Issue</th><th>Due</th><th>Total</th><th>Paid</th><th>Outstanding</th></tr></thead>
+    <tbody>
+      {% for i in invoices %}
+      <tr>
+        <td>{{ i.number }}</td>
+        <td>{{ i.client.name }}</td>
+        <td>{{ i.get_status_display }}</td>
+        <td>{{ i.issue_date }}</td>
+        <td>{{ i.due_date }}</td>
+        <td>{{ i.total }}</td>
+        <td>{{ i.paid_amount }}</td>
+        <td>{{ i.outstanding }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8">No invoices yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

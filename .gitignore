@@ -1,0 +1,22 @@
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual envs
+venv/
+.venv/
+
+# Local secrets
+.env
+
+# Local DB (keep private)
+db.sqlite3
+
+# Collected static
+staticfiles/
+
+# OS junk
+.DS_Store
+Thumbs.db

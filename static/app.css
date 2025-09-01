@@ -1,0 +1,86 @@
+/* app.css — minimal, clean, light theme */
+
+/* --- sizing tweaks --- */
+.chart-box{ padding:14px; }
+#revenueChart, #projectBurnChart { height: 220px !important; }
+#invoiceStatusChart { height: auto !important; aspect-ratio: 1 / 1; max-height: 220px; }
+
+/* optional: softer cards */
+.card{ border-radius:14px; box-shadow:0 4px 14px rgba(2,6,23,.06); }
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+:root{
+  --bg:#f8fafc;         /* background */
+  --text:#0f172a;       /* heading text */
+  --muted:#64748b;      /* secondary text */
+  --card:#ffffff;       /* card background */
+  --border:#e2e8f0;     /* light border */
+  --brand:#2563eb;      /* blue */
+  --brand-weak:#c7d2fe; /* indigo-200 */
+  --success:#10b981;    /* green */
+  --warning:#f59e0b;    /* amber */
+  --danger:#ef4444;     /* red */
+}
+
+*{ font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+body{ background:var(--bg); color:var(--text); }
+
+.navbar{ background:#fff; border-bottom:1px solid var(--border); }
+.navbar .navbar-brand{ font-weight:700; color:var(--text); }
+.navbar .btn{ border-radius:12px; }
+
+.container-narrow{ max-width:1150px; margin:0 auto; padding:32px 16px; }
+
+.card{ background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:0 2px 10px rgba(2,6,23,.04); }
+.card h6{ font-weight:600; color:var(--text); }
+
+.kpi{ padding:18px; }
+.kpi .label{ font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+.kpi .value{ font-size:28px; font-weight:700; color:var(--text); margin-top:6px; }
+
+.table{ color:var(--text); }
+.table thead th{ color:var(--muted); border-bottom:1px solid var(--border); }
+.table tbody td{ border-top:1px solid var(--border); }
+
+.btn-primary{ background:var(--brand); border-color:var(--brand); }
+.btn-outline-dark{ border-color:var(--border); }
+
+/* Default canvas behaviour – fills width, natural height */
+canvas{ width:100% !important; height:auto !important; display:block; }
+
+/* ------------------------------------------------------
+   Chart sizing helpers (prevents vertical stretching)
+   Wrap canvases in .chart-holder and pick a height class
+------------------------------------------------------- */
+.chart-holder{ position:relative; }
+.chart-holder > canvas{ width:100% !important; height:100% !important; display:block; }
+
+.chart-220{ height:220px !important; }
+.chart-260{ height:260px !important; }
+.chart-300{ height:300px !important; }
+
+@media (max-width: 576px){
+  .chart-260{ height:220px !important; }
+  .chart-300{ height:240px !important; }
+}
+
+/* Donuts & other specific charts that must stay circular or compact */
+#invoiceStatusChart { height:auto !important; aspect-ratio:1 / 1; max-height:220px; }
+#expCatChart       { height:auto !important; aspect-ratio:1 / 1; max-height:240px; }
+#revExpChart       { height:260px !important; }
+
+/* Inputs in cards */
+.form-label{ font-weight:600; }
+.form-text{ color: var(--muted); }
+.card .form-control, .card .form-select{
+  border-radius:10px;
+  border:1px solid var(--border);
+}
+.card .form-control:focus, .card .form-select:focus{
+  border-color:#93c5fd;
+  box-shadow:0 0 0 3px rgba(37,99,235,.15);
+}
+
+/* Performance pills */
+.badge{ border-radius:10px; padding:6px 10px; font-weight:600; }

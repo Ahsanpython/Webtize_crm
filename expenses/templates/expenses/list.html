@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="mb-0">Company Expenses</h5>
+  <div class="d-flex gap-2">
+    <form method="get" class="d-flex gap-2">
+      <input type="month" class="form-control form-control-sm" name="month" value="{{ selected_month }}">
+      <button class="btn btn-outline-dark btn-sm">Filter</button>
+      <a class="btn btn-outline-dark btn-sm" href=".">Clear</a>
+    </form>
+    <a class="btn btn-primary btn-sm" href="{% url 'expense_create' %}">+ Add Expense</a>
+  </div>
+</div>
+
+<div class="card p-3 mb-3">
+  <div class="small text-muted">Total (selected month)</div>
+  <div class="fw-semibold">{{ total_month|floatformat:0 }}</div>
+</div>
+
+<div class="card p-0">
+  <table class="table mb-0">
+    <thead>
+      <tr>
+        <th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Vendor</th><th>Paid By</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in expenses %}
+      <tr>
+        <td>{{ e.date }}</td>
+        <td>{{ e.get_category_display }}</td>
+        <td>{{ e.description|default:"—" }}</td>
+        <td>{{ e.amount }}</td>
+        <td>{{ e.vendor|default:"—" }}</td>
+        <td>{{ e.get_payment_method_display }}</td>
+        <td class="text-end">
+          <a class="btn btn-outline-dark btn-sm" href="{% url 'expense_edit' e.pk %}">Edit</a>
+          <a class="btn btn-outline-dark btn-sm" href="{% url 'expense_delete' e.pk %}">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="text-center text-muted">No expenses yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if is_paginated %}
+<nav class="mt-3">
+  <ul class="pagination pagination-sm">
+    {% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_month %}&month={{ selected_month }}{% endif %}">Prev</a></li>{% endif %}
+    <li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+    {% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_month %}&month={{ selected_month }}{% endif %}">Next</a></li>{% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

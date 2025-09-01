@@ -1,0 +1,90 @@
+<!-- 
+{% extends "base.html" %}
+{% block content %}
+  <h4>{{ object.name }}</h4>
+  <div class="row g-3">
+    <div class="col-md-4"><div class="card p-3"><div>Client</div><div class="fw-bold">{{ object.client.name }}</div></div></div>
+    <div class="col-md-4"><div class="card p-3"><div>Status</div><div class="fw-bold">{{ object.get_status_display }}</div></div></div>
+    <div class="col-md-4"><div class="card p-3"><div>Budget</div><div class="fw-bold">{{ object.budget_amount }} {{ object.budget_currency }}</div></div></div>
+    <div class="col-md-4"><div class="card p-3"><div>Estimated Hours</div><div class="fw-bold">{{ object.estimated_hours }}</div></div></div>
+    <div class="col-md-4"><div class="card p-3"><div>Start</div><div class="fw-bold">{{ object.start_date }}</div></div></div>
+    <div class="col-md-4"><div class="card p-3"><div>End</div><div class="fw-bold">{{ object.end_date|default:"—" }}</div></div></div>
+  </div>
+{% endblock %} -->
+
+
+{% extends "base.html" %}
+{% block content %}
+<h4 class="mb-3">{{ object.name }}</h4>
+
+<div class="row g-3">
+  <!-- Basics -->
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="small text-muted">Client</div>
+      <div class="fw-semibold">{{ object.client.name }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="small text-muted">Status</div>
+      <div class="fw-semibold">{{ object.get_status_display }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="small text-muted">Start</div>
+      <div class="fw-semibold">{{ object.start_date }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3">
+      <div class="small text-muted">End</div>
+      <div class="fw-semibold">{{ object.end_date|default:"—" }}</div>
+    </div>
+  </div>
+
+  <!-- Hours -->
+  <div class="col-md-4">
+    <div class="card p-3">
+      <div class="small text-muted">Hours</div>
+      <div class="fw-semibold">{{ spent_hours }}h / {{ object.estimated_hours }}h</div>
+      <div class="small text-muted">Left: {{ hours_left|floatformat:1 }}h • Progress: {{ progress_pct }}%</div>
+    </div>
+  </div>
+
+  <!-- Budget -->
+  <div class="col-md-4">
+    <div class="card p-3">
+      <div class="small text-muted">Budget</div>
+      <div class="fw-semibold">{{ budget|floatformat:0 }} {{ object.budget_currency }}</div>
+      <div class="small text-muted">Spent (billable): {{ spent_cost|floatformat:0 }} • Left: {{ budget_left|floatformat:0 }}</div>
+    </div>
+  </div>
+
+  <!-- Invoices -->
+  <div class="col-md-4">
+    <div class="card p-3">
+      <div class="small text-muted">Invoicing</div>
+      <div class="fw-semibold">Invoiced: {{ invoiced|floatformat:0 }}</div>
+      <div class="small text-muted">Paid: {{ paid|floatformat:0 }} • Outstanding: {{ outstanding|floatformat:0 }}</div>
+    </div>
+  </div>
+
+  <!-- Description -->
+  <div class="col-12">
+    <div class="card p-3">
+      <div class="small text-muted">Description</div>
+      <div>{{ object.description|linebreaksbr }}</div>
+    </div>
+  </div>
+
+  <!-- Quick actions -->
+  <div class="col-12">
+    <div class="d-flex gap-2">
+      <a class="btn btn-primary" href="/timesheets/create/?project={{ object.id }}">+ Log Time</a>
+      <a class="btn btn-outline-dark" href="/invoices/create/?project={{ object.id }}&client={{ object.client.id }}">+ Create Invoice</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

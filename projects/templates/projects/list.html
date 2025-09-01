@@ -1,0 +1,26 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Projects</h4>
+  <a class="btn btn-light" href="/projects/create/">+ New Project</a>
+</div>
+<div class="card p-3">
+  <table class="table table-dark table-striped">
+    <thead><tr><th>Name</th><th>Client</th><th>Status</th><th>Budget</th><th>Est. Hours</th></tr></thead>
+    <tbody>
+      {% for p in projects %}
+      <tr>
+        <td><a href="/projects/{{p.id}}/">{{ p.name }}</a></td>
+        <td>{{ p.client.name }}</td>
+        <td>{{ p.get_status_display }}</td>
+        <td>{{ p.budget_amount }} {{ p.budget_currency }}</td>
+        <td>{{ p.estimated_hours }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5">No projects yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+<h5 class="mb-3">Performance — This Month</h5>
+
+<div class="d-flex gap-2 mb-3">
+  <a class="btn btn-outline-dark btn-sm" href="/performance/export/csv/">Export CSV (this month)</a>
+  <a class="btn btn-outline-dark btn-sm" href="/performance/export/pdf/">Export PDF (this month)</a>
+</div>
+
+<div class="row g-3" id="perf-cards"></div>
+
+<div class="row g-3 mt-1">
+  <div class="col-12 col-lg-6">
+    <div class="card chart-box">
+      <h6 class="mb-3">Leaderboard (Score)</h6>
+      <!-- fixed-height wrapper -->
+      <div class="chart-holder chart-260">
+        <canvas id="perfBoard"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-6">
+    <div class="card chart-box">
+      <h6 class="mb-3">Credits vs Penalties</h6>
+      <!-- fixed-height wrapper -->
+      <div class="chart-holder chart-260">
+        <canvas id="addDedChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mt-1">
+  <div class="col-12">
+    <div class="card chart-box">
+      <h6 class="mb-3">Team Monthly Trend (last 6 months)</h6>
+      <!-- fixed-height wrapper (a bit taller) -->
+      <div class="chart-holder chart-300">
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Color thresholds (absolute score out of 100+)
+  const green  = 'var(--success)';   // >= 91
+  const teal   = '#14b8a6';          // 81-90
+  const blue   = 'var(--brand)';     // 61-80
+  const amber  = '#f59e0b';          // 51-60
+  const red500 = '#ef4444';          // 31-50
+  const red    = 'var(--danger)';    // <= 30
+
+  function scoreColorAbs(s){
+    if (s >= 91) return green;
+    if (s >= 81) return teal;
+    if (s >= 61) return blue;
+    if (s >= 51) return amber;
+    if (s >= 31) return red500;
+    return red;
+  }
+  function statusTextAbs(s){
+    if (s >= 91) return 'Excellent';
+    if (s >= 81) return 'Good';
+    if (s >= 61) return 'Caution';
+    if (s >= 51) return 'Warning';
+    if (s >= 31) return 'High Risk';
+    return 'Critical';
+  }
+
+  async function getJSON(u){ const r = await fetch(u); return r.json(); }
+
+  (async () => {
+    const d = await getJSON('/performance/api/team/');
+
+    // Person cards
+    const wrap = document.getElementById('perf-cards');
+    wrap.innerHTML = '';
+    d.labels.forEach((name, i) => {
+      const s = d.scores[i];
+      const credits   = d.credits[i];
+      const penalties = d.penalties[i];
+      wrap.insertAdjacentHTML('beforeend', `
+        <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+          <div class="card p-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <div style="font-weight:700">${name}</div>
+              <span style="color:${scoreColorAbs(s)}; font-weight:700">${s}</span>
+            </div>
+            <div class="mt-2" style="font-size:12px; color:var(--muted)">
+              Status: ${statusTextAbs(s)}
+            </div>
+            <div class="mt-2" style="display:flex; gap:8px">
+              <span class="badge" style="background:var(--danger); color:#fff">+${penalties}</span>
+              <span class="badge" style="background:var(--success); color:#fff">-${credits}</span>
+            </div>
+          </div>
+        </div>
+      `);
+    });
+
+    // Leaderboard (absolute score)
+    new Chart(document.getElementById('perfBoard').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: d.labels,
+        datasets: [{
+          label:'Score',
+          data: d.scores,
+          backgroundColor: d.scores.map(scoreColorAbs),
+          borderRadius: 8,
+          maxBarThickness: 30
+        }]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false} },
+        scales:{ x:{grid:{display:false}}, y:{beginAtZero:true, suggestedMax:110} }
+      }
+    });
+
+    // Credits (–) vs Penalties (+)
+    new Chart(document.getElementById('addDedChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: d.labels,
+        datasets: [
+          { label:'Credits (–)',   data: d.credits,   backgroundColor: 'rgba(16,185,129,.6)', borderRadius:8, maxBarThickness:30, stack:'s' },
+          { label:'Penalties (+)', data: d.penalties, backgroundColor: 'rgba(239,68,68,.6)',  borderRadius:8, maxBarThickness:30, stack:'s' },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:'top'} },
+        scales:{ x:{stacked:true}, y:{stacked:true, beginAtZero:true} }
+      }
+    });
+
+    // Team monthly trend
+    const t = await getJSON('/performance/api/monthly_trend/');
+    new Chart(document.getElementById('trendChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: t.labels,
+        datasets: [
+          { label: 'Team Score',    data: t.team_scores, borderWidth:2, tension:0.25 },
+          { label: 'Credits (–)',   data: t.credits,     borderWidth:2, tension:0.25 },
+          { label: 'Penalties (+)', data: t.penalties,   borderWidth:2, tension:0.25 },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{position:'top'} },
+        scales:{ y:{ beginAtZero:false } }
+      }
+    });
+  })();
+</script>
+{% endblock %}
