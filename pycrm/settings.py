@@ -154,3 +154,8 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = False
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+
+
+
