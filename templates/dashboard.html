@@ -25,6 +25,41 @@
 
 </div>
 
+<!-- Exports block (put under your main dashboard heading) -->
+<div class="card p-3 mb-3">
+  <h6 class="mb-2">Exports</h6>
+  <div class="d-flex flex-wrap gap-2 align-items-center">
+    <!-- Quick: current month -->
+    <a class="btn btn-outline-dark btn-sm" href="/expenses/export/csv/">Expenses CSV (this month)</a>
+    <a class="btn btn-outline-dark btn-sm" href="/invoices/export/revenue_csv/">Revenue CSV (this month)</a>
+
+    <!-- Pick a month -->
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <label class="form-label mb-0">Pick month</label>
+      <input type="month" id="exportMonth" class="form-control" style="max-width:160px">
+      <button class="btn btn-outline-dark btn-sm" id="btnExp">Expenses</button>
+      <button class="btn btn-outline-dark btn-sm" id="btnRev">Revenue</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const monthEl = document.getElementById('exportMonth');
+    const expBtn  = document.getElementById('btnExp');
+    const revBtn  = document.getElementById('btnRev');
+
+    function go(path){
+      const m = monthEl.value;                 // YYYY-MM
+      if(!m){ alert('Select a month first'); return; }
+      window.location.href = `${path}?month=${m}`;
+    }
+    if (expBtn) expBtn.onclick = () => go('/expenses/export/csv/');
+    if (revBtn) revBtn.onclick = () => go('/invoices/export/revenue_csv/');
+  })();
+</script>
+
+
 <!-- Charts: separate row so they align perfectly -->
 <div class="row g-3 mt-2">
   <div class="col-12 col-lg-6">
